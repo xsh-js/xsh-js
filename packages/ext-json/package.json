@@ -1,0 +1,76 @@
+{
+  "name": "@xsh-js/ext-json",
+  "version": "1.0.0",
+  "license": "Apache-2.0",
+  "author": "Sergey Zholobov",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xsh-js/xsh-js.git",
+    "directory": "packages/ext-json"
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "node:esm:env": "cross-env NODE_OPTIONS=\"--import=node-ts-loader --experimental-specifier-resolution=node --experimental-json-modules\"",
+    "node:esm:env:debug": "cross-env NODE_OPTIONS=\"--import=node-ts-loader --inspect-brk --experimental-specifier-resolution=node --experimental-json-modules\"",
+    "run:node": "node",
+    "run:ts-node": "ts-node --project ./../../tsconfig.node.json",
+    "node:esm": "yarn node:esm:env yarn run:node",
+    "node:esm:debug": "yarn node:esm:env:debug yarn run:node",
+    "node:ts": "yarn node:esm:env yarn run:ts-node",
+    "node:ts:debug": "yarn node:esm:env:debug yarn run:ts-node",
+    "prebuild": "tsc -p ./tsconfig.build.json && tsc-alias -p ./tsconfig.build.json",
+    "bundle": "monk-bundle --entry usr/src/index.ts --config ./tsconfig.build.json --formats esm:mjs,cjs --external \"/@xsh-js\\/*/\"",
+    "build": "yarn prebuild && yarn bundle",
+    "demo": "yarn node:ts ./usr/demo/demo.ts",
+    "demo:debug": "yarn node:ts:debug ./usr/demo/demo.ts",
+    "dev": "nodemon --exec yarn demo",
+    "test": "jest",
+    "test-coverage": "jest --coverage",
+    "lint": "eslint \"./usr/**/*.ts{,x}\" --fix",
+    "lint:dist": "eslint \"./dist/**/*.js{,x}\" --fix",
+    "bump-patch": "yarn version patch",
+    "bump-minor": "yarn version minor",
+    "bump-major": "yarn version major",
+    "ci:build": "yarn build",
+    "startup": "yarn demo"
+  },
+  "dependencies": {
+    "@xsh-js/core": "*"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.1.0",
+    "@eslint/js": "^9.6.0",
+    "@monk-js/monk-js": "^1.0.6",
+    "@types/node": "^20.14.9",
+    "@typescript-eslint/eslint-plugin": "^7.15.0",
+    "@typescript-eslint/parser": "^7.15.0",
+    "cross-env": "^7.0.3",
+    "cross-var": "^1.1.0",
+    "eslint": "^9.6.0",
+    "globals": "^15.8.0",
+    "jest": "^29.7.0",
+    "node-ts-loader": "^1.0.0",
+    "nodemon": "^3.1.4",
+    "ts-jest": "^29.1.5",
+    "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.10",
+    "typescript": "^5.5.4"
+  },
+  "packageManager": "yarn@3.6.1+sha256.811210abb5fb5751da12ead8a9cbc0c150b07e43ac9cbedec6752d22abfd2bd6"
+}

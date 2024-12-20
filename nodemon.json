@@ -1,0 +1,15 @@
+{
+  "watch": [
+    "usr",
+    "./*.mts",
+    "./*.ts",
+    "./*.mjs",
+    "./*.js",
+    "./*.json"
+  ],
+  "ext": "js,mjs,ts,mts,json",
+  "ignore": [
+    "node_modules",
+    "dist"
+  ]
+}

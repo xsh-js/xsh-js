@@ -1,0 +1,33 @@
+.DS_Store
+node_modules
+dist
+/.yarn/cache
+/.yarn/versions
+/.yarn/install-state.gz
+/gen
+/coverage
+*.http
+*.lock
+.npmrc
+
+# local env files
+.env.local
+.env.*.local
+
+# local commands
+*.cmd
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
