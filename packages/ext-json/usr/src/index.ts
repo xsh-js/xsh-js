@@ -29,7 +29,7 @@ import {
 /**
  * Parse JSON result
  */
-export const PREPARE_JSON_RESULT: RuleList = [
+const PREPARE_JSON_RESULT: RuleList = [
   {
     regexp: /"/g,
     callback: '\\"'
@@ -43,7 +43,7 @@ export const PREPARE_JSON_RESULT: RuleList = [
 /**
  * Template commands
  */
-export const ContentCommands = {
+const ContentCommands = {
   /**
    * JSON command
    */
@@ -53,7 +53,7 @@ export const ContentCommands = {
 /**
  * Get plugin config
  */
-export function plugin(): ValidConfig<Record<string, any>, Partial<Record<keyof GlobalRules, any>>> {
+export function extJson(): ValidConfig<Record<string, any>, Partial<Record<keyof GlobalRules, any>>> {
   return validateConfig({
     rules: {
       template: {
@@ -106,4 +106,4 @@ export function plugin(): ValidConfig<Record<string, any>, Partial<Record<keyof 
   });
 }
 
-export default plugin();
+export default extJson();

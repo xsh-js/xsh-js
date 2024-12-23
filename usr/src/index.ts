@@ -15,3 +15,5 @@
  */
 
 export * from '@xsh-js/core';
+export * from '@xsh-js/ext-js';
+export * from '@xsh-js/ext-json';

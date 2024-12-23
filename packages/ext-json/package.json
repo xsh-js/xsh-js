@@ -1,6 +1,6 @@
 {
   "name": "@xsh-js/ext-json",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "Apache-2.0",
   "author": "Sergey Zholobov",
   "type": "module",
@@ -17,6 +17,9 @@
     "README.md",
     "LICENSE"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/xsh-js/xsh-js.git",

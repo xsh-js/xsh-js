@@ -29,7 +29,7 @@ import {
 /**
  * Template commands
  */
-export const ContentCommands = {
+const ContentCommands = {
   /**
    * Line command
    */
@@ -43,7 +43,7 @@ export const ContentCommands = {
 /**
  * Get plugin config
  */
-export function plugin(): ValidConfig<Record<string, any>, Partial<Record<keyof GlobalRules, any>>> {
+export function extJs(): ValidConfig<Record<string, any>, Partial<Record<keyof GlobalRules, any>>> {
   return validateConfig({
     rules: {
       template: {
@@ -106,4 +106,4 @@ export function plugin(): ValidConfig<Record<string, any>, Partial<Record<keyof 
   });
 }
 
-export default plugin();
+export default extJs();

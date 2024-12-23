@@ -1,20 +1,25 @@
 {
   "name": "xsh-js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "Apache-2.0",
   "author": "Sergey Zholobov",
   "type": "module",
   "exports": {
-    "default": "./dist/index.js",
-    "types": "./dist/index.d.ts",
-    "import": "./dist/index.mjs",
-    "require": "./dist/index.cjs"
+    ".": {
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
   },
   "files": [
     "dist",
     "README.md",
     "LICENSE"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/xsh-js/xsh-js.git"
@@ -55,6 +60,11 @@
     "ci:build": "yarn build",
     "startup": "yarn demo"
   },
+  "dependencies": {
+    "@xsh-js/core": "*",
+    "@xsh-js/ext-js": "*",
+    "@xsh-js/ext-json": "*"
+  },
   "devDependencies": {
     "@eslint/eslintrc": "^3.1.0",
     "@eslint/js": "^9.6.0",
@@ -64,9 +74,6 @@
     "@types/node": "^20.14.9",
     "@typescript-eslint/eslint-plugin": "^7.15.0",
     "@typescript-eslint/parser": "^7.15.0",
-    "@xsh-js/core": "*",
-    "@xsh-js/ext-js": "*",
-    "@xsh-js/ext-json": "*",
     "cross-env": "^7.0.3",
     "cross-var": "^1.1.0",
     "eslint": "^9.6.0",
