@@ -15,12 +15,13 @@
  */
 
 import {
+  getFunction,
   getRunnableConstName,
   getVariableHash,
-  GlobalRules,
-  parse,
+  GlobalRules, isArray, isObject,
+  parse, RuleContext,
   ScopeVars,
-  stripSlashes,
+  stripSlashes, TemplateContext, TemplateMeta,
   TemplateProps,
   validateConfig,
   ValidConfig
@@ -33,11 +34,11 @@ const ContentCommands = {
   /**
    * Line command
    */
-  TPL_XSH_COMMAND: /\/\/#xsh\s+(?<command>.*?)\n+/gi,
+  TPL_XSH_COMMAND: /\/\/#xsh\s+(?<command>.*?)(\n|$)/giu,
   /**
    * Template
    */
-  TPL_XSHT_COMMAND: /\/\/#xsht\s+(?<command>.*?)\n+(?<block>[\s\S]*?)\/\/\/xsht/giu,
+  TPL_XSHT_COMMAND: /\/\/#xsht\s+(?<command>.*?)\n+(?<block>[\s\S]*?)\/\/\/xsht(\n|$)/giu,
 }
 
 /**
@@ -51,25 +52,40 @@ export function extJs(): ValidConfig<Record<string, any>, Partial<Record<keyof G
         template: {
           regexp: ContentCommands.TPL_XSHT_COMMAND,
           callback:
-            ({
-               [TemplateProps.context.SCOPE]: scope,
-               [TemplateProps.context.ASYNC]: async,
-             }, match: string, command: string, block: string, offset: number): unknown => {
+            (context, match: string, command: string, block: string, offset: number): unknown => {
               // Remove backslashes
               command = stripSlashes(command);
               // Get command hash
               const varName = getVariableHash(command, true);
-              // Wrap to function
-              scope[varName] = () => {
-                scope[ScopeVars.OFFSET] = offset;
-                scope[ScopeVars.TEMPLATE] = block;
-                return parse(command, scope, async);
-              }
+
+              context[TemplateProps.context.SCOPE][varName] = context[TemplateProps.context.ASYNC] ? async () => {
+                context[TemplateProps.context.SCOPE][ScopeVars.OFFSET] = offset;
+                context[TemplateProps.context.SCOPE][ScopeVars.TEMPLATE] = block;
+                const checkValue = getFunction(context[TemplateProps.context.RULE][TemplateProps.META], 'checkValue');
+                const res = await parse(command, context[TemplateProps.context.SCOPE], context[TemplateProps.context.ASYNC]);
+                return checkValue(res, context) as string;
+              } : () => {
+                context[TemplateProps.context.SCOPE][ScopeVars.OFFSET] = offset;
+                context[TemplateProps.context.SCOPE][ScopeVars.TEMPLATE] = block;
+                const checkValue = getFunction(context[TemplateProps.context.RULE][TemplateProps.META], 'checkValue');
+                const res = parse(command, context[TemplateProps.context.SCOPE], context[TemplateProps.context.ASYNC]);
+                return checkValue(res, context) as string;
+              };
               // Return system command name
               return getRunnableConstName(varName, true);
             },
           meta:
             {
+              checkValue: (value: unknown, context: RuleContext<TemplateContext, TemplateMeta>): unknown => {
+                switch (typeof value) {
+                  case "bigint":
+                  case "number":
+                  case 'string':
+                    return value;
+                  default:
+                    return "";
+                }
+              },
               types: [
                 'js'
               ]
@@ -81,21 +97,36 @@ export function extJs(): ValidConfig<Record<string, any>, Partial<Record<keyof G
         command: {
           regexp: ContentCommands.TPL_XSH_COMMAND,
           callback:
-            ({
-               [TemplateProps.context.SCOPE]: scope,
-               [TemplateProps.context.ASYNC]: async,
-             }, match: string, command: string): unknown => {
+            (context, match: string, command: string): unknown => {
               // Remove backslashes
               command = stripSlashes(command);
               // Get command hash
               const varName = getVariableHash(command, true);
               // Wrap to function
-              scope[varName] = () => parse(command, scope, async)
+              context[TemplateProps.context.SCOPE][varName] = context[TemplateProps.context.ASYNC] ? async () => {
+                const checkValue = getFunction(context[TemplateProps.context.RULE][TemplateProps.META], 'checkValue');
+                const res = await parse(command, context[TemplateProps.context.SCOPE], context[TemplateProps.context.ASYNC]);
+                return checkValue(res, context) as string;
+              } : () => {
+                const checkValue = getFunction(context[TemplateProps.context.RULE][TemplateProps.META], 'checkValue');
+                const res = parse(command, context[TemplateProps.context.SCOPE], context[TemplateProps.context.ASYNC]);
+                return checkValue(res, context) as string;
+              };
               // Return system command name
               return getRunnableConstName(varName, true);
             },
           meta:
             {
+              checkValue: (value: unknown, context: RuleContext<TemplateContext, TemplateMeta>): unknown => {
+                switch (typeof value) {
+                  case "bigint":
+                  case "number":
+                  case 'string':
+                    return value;
+                  default:
+                    return "";
+                }
+              },
               types: [
                 'js'
               ]

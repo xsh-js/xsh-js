@@ -246,6 +246,17 @@ test \`#xsh $$testVar3\``,
 2+$testVar4
 ///xsht`,
       '4'
+    ],
+    [
+      `//#xsh 2 >> testVar4;
+//#xsht null
+///xsht`,
+      ''
+    ],
+    [
+      `//#xsh 2 >> testVar4;
+`,
+      ''
     ]
   ];
 }
