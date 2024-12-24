@@ -1,6 +1,6 @@
 {
   "name": "@xsh-js/ext-js",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "license": "Apache-2.0",
   "author": "Sergey Zholobov",
   "type": "module",
