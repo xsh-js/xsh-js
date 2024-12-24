@@ -63,7 +63,7 @@ export function extJs(): ValidConfig<Record<string, any>, Partial<Record<keyof G
               scope[varName] = () => {
                 scope[ScopeVars.OFFSET] = offset;
                 scope[ScopeVars.TEMPLATE] = block;
-                return parse(command, scope, null, async);
+                return parse(command, scope, async);
               }
               // Return system command name
               return getRunnableConstName(varName, true);
@@ -90,7 +90,7 @@ export function extJs(): ValidConfig<Record<string, any>, Partial<Record<keyof G
               // Get command hash
               const varName = getVariableHash(command, true);
               // Wrap to function
-              scope[varName] = () => parse(command, scope, null, async)
+              scope[varName] = () => parse(command, scope, async)
               // Return system command name
               return getRunnableConstName(varName, true);
             },

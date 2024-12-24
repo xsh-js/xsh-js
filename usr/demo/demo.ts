@@ -83,6 +83,6 @@ xsh.setConfig({
   }
 });
 
-console.log(await xsh.parse(`async 1 --as-array true`, null, null, true));
+console.log(await xsh.parse(`async 1 --as-array true`, null, true));
 
 export {};

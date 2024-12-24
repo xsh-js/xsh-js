@@ -88,7 +88,7 @@ export function isRegexp(value: unknown): value is typeof RegExp {
  * @param value Value
  * @param trim Trim spaces
  */
-export function isEmptyString(value: unknown, trim = false): value is string {
+export function isEmptyString(value: unknown, trim = false): boolean {
   return isString(value) && trim ? value.trim() === "" : value === "";
 }
 

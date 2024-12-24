@@ -890,12 +890,20 @@ export function plugin(): ValidConfig<Record<string, any>, Partial<Record<keyof 
                 } else if (value.startsWith(ComplexBorders.ARR_START) && value.endsWith(ComplexBorders.ARR_END)) { // If it's array
                   // Remove braces
                   value = value.substring(1, value.length - 1);
+                  // Return empty array if value is empty
+                  if (isEmptyString(value, true)) {
+                    return [];
+                  }
                   // Get items
                   const items = value.split(Delimiters.ARR_ITEM);
                   return convertArray(items, scope, false, async);
                 } else if (value.startsWith(ComplexBorders.OBJ_START) && value.endsWith(ComplexBorders.OBJ_END)) {// If it's object
                   // Remove braces
                   value = value.substring(1, value.length - 1);
+                  // Return empty object if value is empty
+                  if (isEmptyString(value, true)) {
+                    return {};
+                  }
                   const items = value.split(Delimiters.JSON_ITEM);
                   const args: ([unknown, unknown])[] = [];
                   let ind = 0;
@@ -952,7 +960,7 @@ export function plugin(): ValidConfig<Record<string, any>, Partial<Record<keyof 
                      }, match: string, name: string): unknown => {
             const variable = name.at(0) === '_' ? name.toLowerCase() : convertToCamelCase(name, '_');
             const varName = getRunnableVariableName(variable);
-            return parse(varName, scope, null, async);
+            return parse(varName, scope, async);
           },
           order: 9999
         },
@@ -969,7 +977,7 @@ export function plugin(): ValidConfig<Record<string, any>, Partial<Record<keyof 
               // Get command hash
               const varName = getVariableHash(command, true);
               // Wrap to function
-              scope[varName] = () => parse(command, scope, null, async)
+              scope[varName] = () => parse(command, scope, async)
               // Return system command name
               return getRunnableConstName(varName, true);
             }
@@ -988,7 +996,7 @@ export function plugin(): ValidConfig<Record<string, any>, Partial<Record<keyof 
               scope[varName] = () => {
                 const variable = name.at(0) === '_' ? name.toLowerCase() : convertToCamelCase(name, '_');
                 const varName = getVariableName(variable);
-                return parse(varName, scope, null, async);
+                return parse(varName, scope, async);
               }
               // Return system command name
               return getRunnableConstName(varName, true);
@@ -1008,7 +1016,7 @@ export function plugin(): ValidConfig<Record<string, any>, Partial<Record<keyof 
               scope[varName] = () => {
                 const variable = name.at(0) === '_' ? name.toLowerCase() : convertToCamelCase(name, '_');
                 const varName = getRunnableVariableName(variable);
-                return parse(varName, scope, null, async);
+                return parse(varName, scope, async);
               }
               // Return system command name
               return getRunnableConstName(varName, true);

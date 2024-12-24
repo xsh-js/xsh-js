@@ -109,6 +109,8 @@ function getSyncVariables(): Record<string, unknown> {
 
 function getCommandProvider(): [test: string, result: unknown, async?: boolean][] {
   return [
+    ['[]', []],
+    ['{}', {}],
     ['true == 1', true],
     ['false == 0', true],
     ['false !== 0', true],
@@ -117,6 +119,7 @@ function getCommandProvider(): [test: string, result: unknown, async?: boolean][
     ['null == ""', false],
     ['text', 'text'],
     ['text; "text2 text3"', 'text2 text3'],
+    ['text+" "+text3', 'text text3'],
     ['"some \\"text\\""', 'some "text"'],
     ['text -p', ['text', '-p']],
     ['p -1', ['p', -1]],
@@ -297,9 +300,9 @@ describe('Parser sync tests', () => {
   for (const item of commandProvider) {
     test(item[0] as string, async () => {
       if (item[2]) {
-        expect(await xsh.parse(item[0], null, null, item[2])).toStrictEqual(item[1]);
+        expect(await xsh.parse(item[0], null, item[2])).toStrictEqual(item[1]);
       } else {
-        expect(xsh.parse(item[0], null, null, item[2])).toStrictEqual(item[1]);
+        expect(xsh.parse(item[0], null, item[2])).toStrictEqual(item[1]);
       }
     });
   }
@@ -327,9 +330,9 @@ describe('Parser sync tests', () => {
   for (const item of errorProvider) {
     test(item[0] as string, async () => {
       if (item[2]) {
-        expect(async () => await xsh.parse(item[0], null, null, item[2])).toThrowError(item[1]);
+        expect(async () => await xsh.parse(item[0], null, item[2])).toThrowError(item[1]);
       } else {
-        expect(() => xsh.parse(item[0], null, null, item[2])).toThrowError(item[1]);
+        expect(() => xsh.parse(item[0], null, item[2])).toThrowError(item[1]);
       }
     });
   }

@@ -69,11 +69,11 @@ export function extJson(): ValidConfig<Record<string, any>, Partial<Record<keyof
               // Wrap to function
               context[TemplateProps.context.SCOPE][varName] = context[TemplateProps.context.ASYNC] ? async () => {
                 const checkValue = getFunction(context[TemplateProps.context.RULE][TemplateProps.META], 'checkValue');
-                const res = await parse(command, context[TemplateProps.context.SCOPE], null, context[TemplateProps.context.ASYNC]);
+                const res = await parse(command, context[TemplateProps.context.SCOPE], context[TemplateProps.context.ASYNC]);
                 return checkValue(res, context) as string;
               } : () => {
                 const checkValue = getFunction(context[TemplateProps.context.RULE][TemplateProps.META], 'checkValue');
-                const res = parse(command, context[TemplateProps.context.SCOPE], null, context[TemplateProps.context.ASYNC]);
+                const res = parse(command, context[TemplateProps.context.SCOPE], context[TemplateProps.context.ASYNC]);
                 return checkValue(res, context) as string;
               };
               // Return system command name

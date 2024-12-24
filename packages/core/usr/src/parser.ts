@@ -165,15 +165,11 @@ function execCommand<R, A extends boolean>(subcommand: SubCommand, scope: Scope 
  * Parse command
  * @param command Command
  * @param scope Scope
- * @param context Context
  * @param async Asynchronously
  */
-export function parse<R, A extends boolean>(command: string, scope: Scope = {}, context: unknown = null, async: A = null): Result<R, A> {
+export function parse<R, A extends boolean>(command: string, scope: Scope = {}, async: A = null): Result<R, A> {
   command = prepareParam(arguments, 0, ArgumentCheck.STRING);
   scope = prepareParam(arguments, 1, ArgumentCheck.OBJECT, {});
-
-  // Add context
-  scope[ScopeVars.CONTEXT] = context;
 
   return exec<R, A>(command, scope, true, async);
 }
