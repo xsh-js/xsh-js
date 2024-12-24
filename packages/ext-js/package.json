@@ -59,7 +59,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.1.0",
     "@eslint/js": "^9.6.0",
-    "@monk-js/monk-js": "^1.0.6",
+    "@monk-js/monk-js": "^1.0.8",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.6",
     "@types/node": "^20.14.9",
