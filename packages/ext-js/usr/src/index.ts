@@ -34,11 +34,11 @@ const ContentCommands = {
   /**
    * Line command
    */
-  TPL_XSH_COMMAND: /\/\/#xsh\s+(?<command>.*?)(\n|$)/giu,
+  TPL_XSH_COMMAND: /(?<start>^\s*)\/\/#xsh\s+(?<command>.*?)(?<end>\n|$)/gimu,
   /**
    * Template
    */
-  TPL_XSHT_COMMAND: /\/\/#xsht\s+(?<command>.*?)\n+(?<block>[\s\S]*?)\/\/\/xsht(\n|$)/giu,
+  TPL_XSHT_COMMAND: /(?<start>^\s*)\/\/#xsht\s+(?<command>.*?)\n(?<block>[\s\S]*?)(?<space>\n\s*|^\s*|$)\/\/\/xsht(?<end>\n|$)/gimu,
 }
 
 /**
@@ -52,36 +52,54 @@ export function extJs(): ValidConfig<Record<string, any>, Partial<Record<keyof G
         template: {
           regexp: ContentCommands.TPL_XSHT_COMMAND,
           callback:
-            (context, match: string, command: string, block: string, offset: number): unknown => {
+            (context, match: string, start:string, command: string, block: string, space:string, end:string, offset: number): unknown => {
               // Remove backslashes
               command = stripSlashes(command);
               // Get command hash
               const varName = getVariableHash(command, true);
 
               context[TemplateProps.context.SCOPE][varName] = context[TemplateProps.context.ASYNC] ? async () => {
+                const checkValue = getFunction(context[TemplateProps.context.RULE][TemplateProps.META], 'checkValue');
+
+                const prevOffset = context[TemplateProps.context.SCOPE][ScopeVars.OFFSET];
+                const prevTemplate = context[TemplateProps.context.SCOPE][ScopeVars.TEMPLATE];
+
                 context[TemplateProps.context.SCOPE][ScopeVars.OFFSET] = offset;
                 context[TemplateProps.context.SCOPE][ScopeVars.TEMPLATE] = block;
-                const checkValue = getFunction(context[TemplateProps.context.RULE][TemplateProps.META], 'checkValue');
+
                 const res = await parse(command, context[TemplateProps.context.SCOPE], context[TemplateProps.context.ASYNC]);
-                return checkValue(res, context) as string;
+
+                context[TemplateProps.context.SCOPE][ScopeVars.OFFSET] = prevOffset;
+                context[TemplateProps.context.SCOPE][ScopeVars.TEMPLATE] = prevTemplate;
+
+                return checkValue(res, end, context) as string;
               } : () => {
+                const checkValue = getFunction(context[TemplateProps.context.RULE][TemplateProps.META], 'checkValue');
+
+                const prevOffset = context[TemplateProps.context.SCOPE][ScopeVars.OFFSET];
+                const prevTemplate = context[TemplateProps.context.SCOPE][ScopeVars.TEMPLATE];
+
                 context[TemplateProps.context.SCOPE][ScopeVars.OFFSET] = offset;
                 context[TemplateProps.context.SCOPE][ScopeVars.TEMPLATE] = block;
-                const checkValue = getFunction(context[TemplateProps.context.RULE][TemplateProps.META], 'checkValue');
+
                 const res = parse(command, context[TemplateProps.context.SCOPE], context[TemplateProps.context.ASYNC]);
-                return checkValue(res, context) as string;
+
+                context[TemplateProps.context.SCOPE][ScopeVars.OFFSET] = prevOffset;
+                context[TemplateProps.context.SCOPE][ScopeVars.TEMPLATE] = prevTemplate;
+
+                return checkValue(res, end, context) as string;
               };
               // Return system command name
               return getRunnableConstName(varName, true);
             },
           meta:
             {
-              checkValue: (value: unknown, context: RuleContext<TemplateContext, TemplateMeta>): unknown => {
+              checkValue: (value: unknown, end:string, context: RuleContext<TemplateContext, TemplateMeta>): unknown => {
                 switch (typeof value) {
                   case "bigint":
                   case "number":
                   case 'string':
-                    return value;
+                    return `${value}${end}`;
                   default:
                     return "";
                 }
@@ -97,7 +115,7 @@ export function extJs(): ValidConfig<Record<string, any>, Partial<Record<keyof G
         command: {
           regexp: ContentCommands.TPL_XSH_COMMAND,
           callback:
-            (context, match: string, command: string): unknown => {
+            (context, match: string, start:string, command: string, end: string): unknown => {
               // Remove backslashes
               command = stripSlashes(command);
               // Get command hash
@@ -105,24 +123,28 @@ export function extJs(): ValidConfig<Record<string, any>, Partial<Record<keyof G
               // Wrap to function
               context[TemplateProps.context.SCOPE][varName] = context[TemplateProps.context.ASYNC] ? async () => {
                 const checkValue = getFunction(context[TemplateProps.context.RULE][TemplateProps.META], 'checkValue');
+
                 const res = await parse(command, context[TemplateProps.context.SCOPE], context[TemplateProps.context.ASYNC]);
-                return checkValue(res, context) as string;
+
+                return checkValue(res, end, context) as string;
               } : () => {
                 const checkValue = getFunction(context[TemplateProps.context.RULE][TemplateProps.META], 'checkValue');
+
                 const res = parse(command, context[TemplateProps.context.SCOPE], context[TemplateProps.context.ASYNC]);
-                return checkValue(res, context) as string;
+
+                return checkValue(res, end, context) as string;
               };
               // Return system command name
               return getRunnableConstName(varName, true);
             },
           meta:
             {
-              checkValue: (value: unknown, context: RuleContext<TemplateContext, TemplateMeta>): unknown => {
+              checkValue: (value: unknown, end: string, context: RuleContext<TemplateContext, TemplateMeta>): unknown => {
                 switch (typeof value) {
                   case "bigint":
                   case "number":
                   case 'string':
-                    return value;
+                    return `${value}${end}`;
                   default:
                     return "";
                 }

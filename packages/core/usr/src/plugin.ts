@@ -304,7 +304,11 @@ export function plugin(): ValidConfig<Record<string, any>, Partial<Record<keyof 
                      }): unknown => {
             let res: unknown;
             for (const part of subcommand) {
-              res = execCommandSync(part, scope);
+              if (isEmptyString(part, true)) {
+                res = undefined;
+              } else {
+                res = execCommandSync(part, scope);
+              }
             }
             return res;
           },
@@ -314,7 +318,11 @@ export function plugin(): ValidConfig<Record<string, any>, Partial<Record<keyof 
                                 }): Promise<unknown> => {
             let res: unknown;
             for (const part of subcommand) {
-              res = await execCommandAsync(part, scope);
+              if (isEmptyString(part, true)) {
+                res = undefined;
+              } else {
+                res = await execCommandAsync(part, scope);
+              }
             }
             return res;
           },
